@@ -1,7 +1,6 @@
 stages:
   - test
   - build
-  - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
@@ -12,40 +11,18 @@ cache:
 
 test-compile:
   stage: test
-  image: maven:3-eclipse-temurin-21
+  tags:
+    - self-hosted
   script:
     - mvn compile -q
-  only:
-    - main
-    - merge_requests
 
 build-war:
   stage: build
-  image: maven:3-eclipse-temurin-21
+  tags:
+    - self-hosted
   script:
     - mvn clean package -DskipTests
-    - mkdir -p public
-    - cp target/coffee-shop.war public/
   artifacts:
     paths:
-      - public/
+      - target/coffee-shop.war
     expire_in: 1 hour
-  only:
-    - main
-
-pages:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - mkdir -p public
-    - cp target/coffee-shop.war public/ || echo "WAR not found, using prebuilt artifact"
-    - ls -la public/
-  artifacts:
-    paths:
-      - public/
-    expire_in: never
-  only:
-    - main
-  environment:
-    name: production
-    url: https://elemenopi-raf.gitlab.io/coffee-shop
