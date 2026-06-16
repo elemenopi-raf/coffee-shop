@@ -3,41 +3,29 @@ stages:
   - build
   - deploy
 
-# ── Stage 1: Test ──────────────────────────────────────────
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-test-html:
+cache:
+  paths:
+    - .m2/repository/
+
+test-compile:
   stage: test
-  image: alpine:latest
+  image: maven:3-eclipse-temurin-21
   script:
-    - apk add --no-cache htmlhint
-    - htmlhint index.html
-  allow_failure: true
+    - mvn compile -q
   only:
     - main
     - merge_requests
 
-test-links:
-  stage: test
-  image: alpine:latest
-  script:
-    - apk add --no-cache curl
-    - echo "Checking that index.html exists..."
-    - 'test -f index.html && echo "PASS: index.html found" || (echo "FAIL: index.html missing" && exit 1)'
-    - echo "All static files present."
-  only:
-    - main
-    - merge_requests
-
-# ── Stage 2: Build ──────────────────────────────────────────
-
-build-static:
+build-war:
   stage: build
-  image: alpine:latest
+  image: maven:3-eclipse-temurin-21
   script:
+    - mvn clean package -DskipTests
     - mkdir -p public
-    - cp index.html public/
-    - echo "Build complete. Files in public/:"
-    - ls -la public/
+    - cp target/coffee-shop.war public/
   artifacts:
     paths:
       - public/
@@ -45,15 +33,13 @@ build-static:
   only:
     - main
 
-# ── Stage 3: Deploy (GitLab Pages) ─────────────────────────
-
 pages:
   stage: deploy
   image: alpine:latest
   script:
-    - echo "Deploying to GitLab Pages..."
     - mkdir -p public
-    - cp index.html public/
+    - cp target/coffee-shop.war public/ || echo "WAR not found, using prebuilt artifact"
+    - ls -la public/
   artifacts:
     paths:
       - public/

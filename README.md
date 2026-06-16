@@ -1,239 +1,177 @@
 # Brew & Bean Coffee Shop
 
-A one-page coffee shop website built with HTML, CSS, and JavaScript.
+A one-page coffee shop website built with **Jakarta EE (J2EE)**, **PostgreSQL**, and **Podman**.
+
+## Architecture
+
+```
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│   Browser    │────▶│  Tomcat 10   │────▶│  PostgreSQL  │
+│  (HTML/CSS)  │◀────│  (Servlets)  │◀────│  (Database)  │
+└──────────────┘     └──────────────┘     └──────────────┘
+                           │
+                    ┌──────┴──────┐
+                    │   MVC Pattern     │
+                    │ Model │ View │ Ctrl│
+                    └──────────────────┘
+```
+
+| Layer | Technology | Files |
+|-------|-----------|-------|
+| **View** | JSP + CSS + JS | `WEB-INF/index.jsp`, `css/style.css`, `js/script.js` |
+| **Controller** | Jakarta Servlets | `HomeServlet.java`, `ContactServlet.java` |
+| **Model** | POJOs | `MenuItem.java`, `Testimonial.java`, `ContactMessage.java` |
+| **DAO** | JDBC | `MenuItemDAO.java`, `TestimonialDAO.java`, `ContactMessageDAO.java` |
+| **Database** | PostgreSQL | Schema in `init.sql` |
+| **Container** | Podman | `Containerfile` + `compose.yaml` |
 
 ---
 
-## Beginner's Guide: CI/CD with GitLab
+## Prerequisites
 
-This guide walks you through testing, building, and deploying this coffee shop site using **GitLab** and **GitLab CI**.
-
----
-
-### 1. Prerequisites
-
-- A [GitLab.com](https://gitlab.com) account (free tier works)
-- [Git](https://git-scm.com/downloads) installed on your machine
-- A code editor (VS Code recommended)
-- A web browser
+- [Podman](https://podman.io/docs/installation) installed
+- [Podman Compose](https://github.com/containers/podman-compose) installed (`pip install podman-compose`)
 
 ---
 
-### 2. Push the Code to GitLab
+## Run Locally with Podman
 
-#### 2.1 Create a new project on GitLab
-
-1. Log in to [gitlab.com](https://gitlab.com)
-2. Click **"New project"** → **"Create blank project"**
-3. Fill in:
-   - **Project name:** `coffee-shop`
-   - **Visibility Level:** `Public` (or Private if you prefer)
-4. Click **"Create project"**
-
-#### 2.2 Push your code
-
-Open a terminal in the project folder and run:
+### 1. Build and Start
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit: coffee shop website"
-git remote add origin https://gitlab.com/YOUR_USERNAME/coffee-shop.git
-git branch -M main
-git push -u origin main
+podman-compose up --build
 ```
 
-> Replace `YOUR_USERNAME` with your actual GitLab username.
+This starts two containers:
+- **`db`** — PostgreSQL 16 with schema + seed data
+- **`app`** — Tomcat 10 with the compiled WAR
 
----
+### 2. Open the Site
 
-### 3. Set Up GitLab CI/CD
-
-GitLab CI uses a file called `.gitlab-ci.yml` at the root of your repository. Every time you push, GitLab runs the pipeline defined in that file.
-
-Create `.gitlab-ci.yml` in the project root:
-
-```yaml
-# .gitlab-ci.yml
-
-stages:
-  - test
-  - build
-  - deploy
-
-variables:
-  CI_DEBUG_TRACE: "false"
-
-# ── Stage 1: Test ──────────────────────────────────────────
-
-test-html:
-  stage: test
-  image: alpine:latest
-  script:
-    - apk add --no-cache htmlhint
-    - htmlhint index.html
-  allow_failure: true
-  only:
-    - main
-    - merge_requests
-
-test-links:
-  stage: test
-  image: alpine:latest
-  script:
-    - apk add --no-cache curl
-    - echo "Checking that index.html exists..."
-    - test -f index.html && echo "PASS: index.html found" || (echo "FAIL: index.html missing" && exit 1)
-    - echo "All static files present."
-  only:
-    - main
-    - merge_requests
-
-# ── Stage 2: Build ──────────────────────────────────────────
-
-build-static:
-  stage: build
-  image: alpine:latest
-  script:
-    - mkdir -p public
-    - cp index.html public/
-    - echo "Build complete. Files in public/:"
-    - ls -la public/
-  artifacts:
-    paths:
-      - public/
-    expire_in: 1 hour
-  only:
-    - main
-
-# ── Stage 3: Deploy (GitLab Pages) ─────────────────────────
-
-pages:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - echo "Deploying to GitLab Pages..."
-    - mkdir -p public
-    - cp index.html public/
-  artifacts:
-    paths:
-      - public/
-    expire_in: never
-  only:
-    - main
-  environment:
-    name: production
-    url: https://YOUR_USERNAME.gitlab.io/coffee-shop
+```
+http://localhost:8080
 ```
 
----
+The `HomeServlet` loads menu items and testimonials from PostgreSQL and renders them in `index.jsp`.
 
-### 4. Push and Watch the Pipeline
+### 3. Stop
 
 ```bash
-git add .gitlab-ci.yml
-git commit -m "Add GitLab CI/CD pipeline"
-git push
+podman-compose down
 ```
 
-1. Go to your GitLab project
-2. Click **"CI/CD"** → **"Pipelines"**
-3. You should see a running pipeline with three stages:
-   - ✅ **test** (check HTML and files)
-   - 🔨 **build** (prepare static files)
-   - 🚀 **deploy** (publish to GitLab Pages)
-
-Click on each stage to view the live logs.
-
----
-
-### 5. Enable GitLab Pages
-
-After the pipeline succeeds:
-
-1. Go to **Settings** → **Pages**
-2. You'll see a URL like: `https://YOUR_USERNAME.gitlab.io/coffee-shop`
-3. Click **"Visit"** to see your live coffee shop site
-
-The default Pages URL is:
-```
-https://YOUR_USERNAME.gitlab.io/coffee-shop
-```
-
----
-
-### 6. Make a Change and Re-deploy
-
-Let's trigger a new pipeline by making a simple change:
-
-1. Edit the price of Espresso in `index.html`
-2. Commit and push:
+To also delete the database volume:
 
 ```bash
-git add index.html
-git commit -m "Update espresso price"
-git push
+podman-compose down -v
 ```
 
-The pipeline will automatically run and re-deploy to Pages.
+---
+
+## Project Structure
+
+```
+coffee-shop/
+├── pom.xml                          # Maven build (Jakarta EE 6, JDBC)
+├── Containerfile                    # Multi-stage Podman build
+├── compose.yaml                     # Podman Compose (app + db)
+├── init.sql                         # DB schema + seed data
+├── .gitlab-ci.yml                   # GitLab CI pipeline
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/coffeeshop/
+│       │       ├── model/           # MenuItem, Testimonial, ContactMessage
+│       │       ├── dao/             # DatabaseConnection, *DAO
+│       │       └── controller/      # HomeServlet, ContactServlet
+│       ├── resources/
+│       │   └── db.properties        # DB connection config
+│       └── webapp/
+│           ├── WEB-INF/
+│           │   ├── web.xml
+│           │   └── index.jsp        # Main page (JSTL)
+│           ├── css/
+│           │   └── style.css
+│           └── js/
+│               └── script.js
+└── README.md
+```
 
 ---
 
-### 7. Pipeline Explained
+## How It Works (MVC Flow)
 
-| Stage | Job | What it does |
-|-------|-----|-------------|
-| `test` | `test-html` | Runs `htmlhint` to validate HTML syntax |
-| `test` | `test-links` | Checks that all static files exist |
-| `build` | `build-static` | Copies files into a `public/` folder and saves them as artifacts |
-| `deploy` | `pages` | Publishes the `public/` folder to GitLab Pages |
+### Home Page
+1. Browser requests `http://localhost:8080/`
+2. `HomeServlet` (Controller) queries `MenuItemDAO` + `TestimonialDAO` (Model)
+3. DAOs fetch data from PostgreSQL
+4. Servlet forwards to `WEB-INF/index.jsp` (View)
+5. JSP renders the page with menu items and testimonials via JSTL
 
-- **Artifacts** are files passed between stages (e.g., build output sent to deploy)
-- **`only: main`** means the job runs only on the `main` branch
-- **`allow_failure: true`** means the pipeline continues even if that job fails (good for optional linting)
+### Contact Form
+1. User fills form and clicks Submit
+2. Form POSTs to `/contact`
+3. `ContactServlet` validates input
+4. `ContactMessageDAO` saves to `contact_messages` table
+5. Redirects back to home with success/error flash message
 
----
+### Database Tables
 
-### 8. Next Steps
-
-| Topic | What to learn |
-|-------|--------------|
-| Add CSS linting | Add `stylelint` to the test stage |
-| Add JS linting | Add `eslint` to the test stage |
-| Add unit tests | Use a framework like Jest (even for simple logic) |
-| Deploy to Netlify | Use Netlify CLI or deploy job with deploy tokens |
-| Deploy to AWS S3 | Add `aws-cli` in the deploy stage |
-| Add a custom domain | Configure it in GitLab Pages settings |
-| Add a review app | Deploy each MR to a unique URL |
-| Add Slack notifications | Use the `slack-notify` or webhook integration |
+```sql
+menu_items:       id, name, price, icon
+testimonials:     id, text, author
+contact_messages: id, name, email, message, created_at
+```
 
 ---
 
-### 9. Troubleshooting
+## GitLab CI/CD Pipeline
+
+Pipeline stages:
+1. **test-compile** — Verifies the project compiles with Maven
+2. **build-war** — Packages the WAR file
+3. **pages** — Archives the WAR as an artifact
+
+See `.gitlab-ci.yml` for details.
+
+---
+
+## Container Details
+
+### Containerfile (Multi-stage)
+- **Stage 1 (build)**: `maven:3-eclipse-temurin-21` — compiles and packages WAR
+- **Stage 2 (runtime)**: `tomcat:10-jdk21` — deploys WAR as ROOT
+
+### compose.yaml Services
+
+| Service | Image | Port | Purpose |
+|---------|-------|------|---------|
+| `db` | postgres:16 | 5432 | Database |
+| `app` | custom (built) | 8080 | Tomcat + WAR |
+
+The app waits for DB via `healthcheck` before starting.
+
+---
+
+## Key Files Reference
+
+| File | Purpose |
+|------|---------|
+| `pom.xml` | Maven config with Jakarta Servlet 6 + PostgreSQL JDBC 42 |
+| `src/main/resources/db.properties` | JDBC connection string (`db:5432` hostname from compose) |
+| `compose.yaml` | Orchestrates PostgreSQL + Tomcat containers |
+| `Containerfile` | Multi-stage build: Maven → Tomcat |
+| `init.sql` | Runs on first DB startup, creates tables + seed data |
+| `.gitlab-ci.yml` | CI: compile, package, archive |
+
+---
+
+## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
-| Pipeline stuck | Check your GitLab runner — shared runners are free but may queue |
-| Pages URL returns 404 | Wait 5 minutes after deploy; check **Settings → Pages** |
-| `htmlhint` not found | `apk add` may fail if Alpine repo is down — retry |
-| Push rejected | Run `git pull --rebase` first |
-| Want to run a job manually | Use `when: manual` in the job definition |
-
----
-
-### 10. Useful Commands
-
-```bash
-# Run pipeline locally (requires gitlab-runner)
-gitlab-runner exec docker test-html
-
-# View logs for the last pipeline
-curl --header "PRIVATE-TOKEN: YOUR_TOKEN" https://gitlab.com/api/v4/projects/YOUR_PROJECT_ID/jobs
-
-# Download artifacts
-curl --header "PRIVATE-TOKEN: YOUR_TOKEN" https://gitlab.com/api/v4/projects/YOUR_PROJECT_ID/jobs/ARTIFACT_ID/artifacts
-```
-
----
-
-Happy brewing and happy deploying! ☕
+| Port 8080 in use | Change `"8080:8080"` in `compose.yaml` to `"8081:8080"` |
+| DB connection refused | Wait for healthcheck; run `podman-compose logs db` |
+| Changes not reflected | Run `podman-compose up --build` to rebuild the WAR |
+| Windows line endings | Use `git config core.autocrlf input` before committing |
+| Podman not found | Install from https://podman.io/docs/installation |
