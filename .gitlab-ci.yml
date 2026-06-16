@@ -62,4 +62,4 @@ pages:
     - main
   environment:
     name: production
-    url: https://YOUR_USERNAME.gitlab.io/coffee-shop
+    url: https://elemenopi-raf.gitlab.io/coffee-shop
