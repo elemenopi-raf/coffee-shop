@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brew & Bean</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #2c1810;
+    }
+
+    header {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1600') center/cover;
+      color: #fff;
+      padding: 2rem 0;
+      text-align: center;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #d4a574;
+    }
+
+    .hero {
+      padding: 6rem 2rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background: #d4a574;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50px;
+      transition: background 0.3s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn:hover {
+      background: #b8895e;
+      transform: scale(1.05);
+    }
+
+    section {
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    section h2::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: #d4a574;
+      margin: 0.5rem auto 0;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .menu-item {
+      background: #faf6f1;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .menu-item .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .menu-item h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-item .price {
+      color: #d4a574;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .about-content {
+      display: flex;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .about-content img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 12px;
+    }
+
+    .about-text p {
+      margin-bottom: 1rem;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial {
+      background: #faf6f1;
+      padding: 2rem;
+      border-radius: 12px;
+      font-style: italic;
+      position: relative;
+    }
+
+    .testimonial::before {
+      content: '\201C';
+      font-size: 4rem;
+      color: #d4a574;
+      position: absolute;
+      top: -10px;
+      left: 15px;
+    }
+
+    .testimonial .author {
+      font-style: normal;
+      font-weight: 600;
+      margin-top: 1rem;
+      color: #d4a574;
+    }
+
+    .contact-form {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      padding: 0.8rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .contact-form textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: #d4a574;
+    }
+
+    #form-message {
+      text-align: center;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    footer {
+      background: #2c1810;
+      color: #ccc;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    footer span {
+      color: #d4a574;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      nav { gap: 1rem; flex-wrap: wrap; }
+      .about-content { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="#home">Home</a>
+      <a href="#menu">Menu</a>
+      <a href="#about">About</a>
+      <a href="#testimonials">Testimonials</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="hero" id="home">
+      <h1>Brew & Bean</h1>
+      <p>Where every cup tells a story. Artisan coffee crafted with passion.</p>
+      <a href="#menu" class="btn">Explore Our Menu</a>
+    </div>
+  </header>
+
+  <section id="menu">
+    <h2>Our Menu</h2>
+    <div class="menu-grid" id="menu-grid">
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About Us</h2>
+    <div class="about-content">
+      <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500" alt="Coffee shop interior">
+      <div class="about-text">
+        <p>Founded in 2015, Brew & Bean started as a small dream between two friends who believed that great coffee brings people together. We source our beans directly from sustainable farms in Ethiopia, Colombia, and Guatemala.</p>
+        <p>Every drink is handcrafted by our skilled baristas who treat each cup as a work of art. Whether you need a quiet corner to read or a vibrant space to catch up with friends, our doors are always open.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonial-grid" id="testimonial-grid">
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Get In Touch</h2>
+    <form class="contact-form" id="contact-form">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <textarea id="message" placeholder="Your Message" required></textarea>
+      <button type="submit" class="btn">Send Message</button>
+      <p id="form-message"></p>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2026 <span>Brew & Bean</span>. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const menuItems = [
+      { icon: '\u2615', name: 'Espresso', price: '$3.50' },
+      { icon: '\U0001F9C3', name: 'Latte', price: '$4.50' },
+      { icon: '\U0001F36E', name: 'Cappuccino', price: '$4.00' },
+      { icon: '\U0001F375', name: 'Mocha', price: '$5.00' },
+      { icon: '\U0001F95C', name: 'Cold Brew', price: '$4.50' },
+      { icon: '\U0001F34E', name: 'Flat White', price: '$4.25' },
+    ];
+
+    const testimonials = [
+      { text: 'The best latte I\'ve ever had. The atmosphere is cozy and the staff is incredibly friendly.', author: 'Sarah L.' },
+      { text: 'Their cold brew is a game changer. I stop here every morning on my way to work.', author: 'James M.' },
+      { text: 'A hidden gem. Perfect place to work remotely with great coffee and free Wi-Fi.', author: 'Emily R.' },
+    ];
+
+    const menuGrid = document.getElementById('menu-grid');
+    menuItems.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'menu-item';
+      div.innerHTML = `<div class="icon">${item.icon}</div><h3>${item.name}</h3><p class="price">${item.price}</p>`;
+      menuGrid.appendChild(div);
+    });
+
+    const testimonialGrid = document.getElementById('testimonial-grid');
+    testimonials.forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'testimonial';
+      div.innerHTML = `<p>${t.text}</p><p class="author">- ${t.author}</p>`;
+      testimonialGrid.appendChild(div);
+    });
+
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const formMsg = document.getElementById('form-message');
+
+      if (!name || !email || !message) {
+        formMsg.textContent = 'Please fill in all fields.';
+        formMsg.style.color = '#e74c3c';
+        return;
+      }
+
+      if (!email.includes('@')) {
+        formMsg.textContent = 'Please enter a valid email.';
+        formMsg.style.color = '#e74c3c';
+        return;
+      }
+
+      formMsg.textContent = `Thanks, ${name}! We'll get back to you soon.`;
+      formMsg.style.color = '#27ae60';
+      this.reset();
+    });
+  </script>
+</body>
+</html>

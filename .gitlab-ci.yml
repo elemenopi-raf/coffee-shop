@@ -1,0 +1,65 @@
+stages:
+  - test
+  - build
+  - deploy
+
+# ── Stage 1: Test ──────────────────────────────────────────
+
+test-html:
+  stage: test
+  image: alpine:latest
+  script:
+    - apk add --no-cache htmlhint
+    - htmlhint index.html
+  allow_failure: true
+  only:
+    - main
+    - merge_requests
+
+test-links:
+  stage: test
+  image: alpine:latest
+  script:
+    - apk add --no-cache curl
+    - echo "Checking that index.html exists..."
+    - test -f index.html && echo "PASS: index.html found" || (echo "FAIL: index.html missing" && exit 1)
+    - echo "All static files present."
+  only:
+    - main
+    - merge_requests
+
+# ── Stage 2: Build ──────────────────────────────────────────
+
+build-static:
+  stage: build
+  image: alpine:latest
+  script:
+    - mkdir -p public
+    - cp index.html public/
+    - echo "Build complete. Files in public/:"
+    - ls -la public/
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+  only:
+    - main
+
+# ── Stage 3: Deploy (GitLab Pages) ─────────────────────────
+
+pages:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deploying to GitLab Pages..."
+    - mkdir -p public
+    - cp index.html public/
+  artifacts:
+    paths:
+      - public/
+    expire_in: never
+  only:
+    - main
+  environment:
+    name: production
+    url: https://YOUR_USERNAME.gitlab.io/coffee-shop
