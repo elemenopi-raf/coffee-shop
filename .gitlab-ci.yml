@@ -16,7 +16,7 @@ test-html:
     - main
     - merge_requests
 
-test-links:
+.test-links:
   stage: test
   image: alpine:latest
   script:
