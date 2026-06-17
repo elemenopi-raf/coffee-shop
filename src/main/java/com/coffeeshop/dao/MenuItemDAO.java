@@ -8,16 +8,18 @@ import java.util.List;
 public class MenuItemDAO {
     public List<MenuItem> getAll() throws Exception {
         List<MenuItem> items = new ArrayList<>();
-        String sql = "SELECT * FROM menu_items ORDER BY id";
+        String sql = "SELECT id, name, price, category, image_url FROM menu_items ORDER BY " +
+            "CASE category WHEN 'HOT' THEN 1 WHEN 'COLD' THEN 2 WHEN 'PASTRY' THEN 3 END, id";
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 MenuItem item = new MenuItem();
                 item.setId(rs.getInt("id"));
                 item.setName(rs.getString("name"));
-                item.setPrice(rs.getString("price"));
-                item.setIcon(rs.getString("icon"));
+                item.setPrice(rs.getBigDecimal("price"));
+                item.setCategory(rs.getString("category"));
+                item.setImageUrl(rs.getString("image_url"));
                 items.add(item);
             }
         }

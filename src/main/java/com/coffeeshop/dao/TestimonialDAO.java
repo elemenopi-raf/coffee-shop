@@ -8,10 +8,10 @@ import java.util.List;
 public class TestimonialDAO {
     public List<Testimonial> getAll() throws Exception {
         List<Testimonial> list = new ArrayList<>();
-        String sql = "SELECT * FROM testimonials ORDER BY id";
+        String sql = "SELECT id, text, author FROM testimonials ORDER BY id";
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Testimonial t = new Testimonial();
                 t.setId(rs.getInt("id"));

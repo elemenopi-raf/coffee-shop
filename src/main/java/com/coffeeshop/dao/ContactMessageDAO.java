@@ -2,6 +2,8 @@ package com.coffeeshop.dao;
 
 import com.coffeeshop.model.ContactMessage;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContactMessageDAO {
     public void save(ContactMessage msg) throws Exception {
@@ -13,5 +15,25 @@ public class ContactMessageDAO {
             stmt.setString(3, msg.getMessage());
             stmt.executeUpdate();
         }
+    }
+
+    public List<ContactMessage> findAll() throws Exception {
+        List<ContactMessage> messages = new ArrayList<>();
+        String sql = "SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ContactMessage msg = new ContactMessage();
+                msg.setId(rs.getInt("id"));
+                msg.setName(rs.getString("name"));
+                msg.setEmail(rs.getString("email"));
+                msg.setMessage(rs.getString("message"));
+                Timestamp ts = rs.getTimestamp("created_at");
+                if (ts != null) msg.setCreatedAt(ts.toLocalDateTime());
+                messages.add(msg);
+            }
+        }
+        return messages;
     }
 }
