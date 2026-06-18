@@ -1,11 +1,23 @@
 package com.coffeeshop.dao;
 
 import com.coffeeshop.model.Testimonial;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestimonialDAO {
+/**
+ * Data access object for testimonials table.
+ */
+public final class TestimonialDAO {
+
+    /**
+     * Retrieves all testimonials ordered by id.
+     *
+     * @return list of all testimonials
+     * @throws Exception if a database error occurs
+     */
     public List<Testimonial> getAll() throws Exception {
         List<Testimonial> list = new ArrayList<>();
         String sql = "SELECT id, text, author FROM testimonials ORDER BY id";

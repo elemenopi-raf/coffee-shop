@@ -1,15 +1,23 @@
 package com.coffeeshop.controller;
 
 import com.coffeeshop.dao.ContactMessageDAO;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+/**
+ * Admin dashboard servlet. Displays contact messages.
+ * Requires an active admin session.
+ */
 @WebServlet("/admin")
-public class AdminServlet extends HttpServlet {
+public final class AdminServlet extends HttpServlet {
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("adminLoggedIn") == null) {
@@ -19,7 +27,8 @@ public class AdminServlet extends HttpServlet {
         try {
             req.setAttribute("messages", new ContactMessageDAO().findAll());
         } catch (Exception e) {
-            req.setAttribute("error", "Could not load messages: " + e.getMessage());
+            req.setAttribute("error",
+                    "Could not load messages: " + e.getMessage());
         }
         req.getRequestDispatcher("/WEB-INF/admin.jsp").forward(req, resp);
     }

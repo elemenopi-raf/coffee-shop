@@ -6,7 +6,13 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Properties;
 
-public class DatabaseConnection {
+/**
+ * Provides database connections using HikariCP connection pool.
+ * Configuration is loaded from db.properties on the classpath.
+ */
+public final class DatabaseConnection {
+
+    /** The HikariCP connection pool. */
     private static final HikariDataSource dataSource;
 
     static {
@@ -27,7 +33,16 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * Returns a connection from the pool.
+     *
+     * @return a database connection
+     * @throws Exception if a connection cannot be obtained
+     */
     public static Connection getConnection() throws Exception {
         return dataSource.getConnection();
+    }
+
+    private DatabaseConnection() {
     }
 }

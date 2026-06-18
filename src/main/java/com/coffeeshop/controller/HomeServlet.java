@@ -2,15 +2,22 @@ package com.coffeeshop.controller;
 
 import com.coffeeshop.dao.MenuItemDAO;
 import com.coffeeshop.dao.TestimonialDAO;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+/**
+ * Handles requests to the home page. Loads menu items and testimonials
+ * from the database and forwards to index.jsp.
+ */
 @WebServlet("")
-public class HomeServlet extends HttpServlet {
+public final class HomeServlet extends HttpServlet {
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         try {
             req.setAttribute("menuItems", new MenuItemDAO().getAll());
