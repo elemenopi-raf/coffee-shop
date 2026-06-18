@@ -1,17 +1,27 @@
 package com.coffeeshop.controller;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+/**
+ * Handles admin login and logout requests.
+ */
 @WebServlet({"/admin/login", "/admin/logout"})
-public class AdminLoginServlet extends HttpServlet {
+public final class AdminLoginServlet extends HttpServlet {
+
+    /** The admin username. */
     private static final String ADMIN_USER = "admin";
+
+    /** The admin password. */
     private static final String ADMIN_PASS = "admin123";
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         String path = req.getServletPath();
         if ("/admin/logout".equals(path)) {
@@ -27,7 +37,7 @@ public class AdminLoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         String path = req.getServletPath();
         if ("/admin/logout".equals(path)) {
@@ -46,7 +56,14 @@ public class AdminLoginServlet extends HttpServlet {
         }
     }
 
-    private void doLogout(HttpServletRequest req, HttpServletResponse resp)
+    /**
+     * Invalidates the session and redirects to the login page.
+     *
+     * @param req the HTTP request
+     * @param resp the HTTP response
+     * @throws IOException if an I/O error occurs
+     */
+    private void doLogout(final HttpServletRequest req, final HttpServletResponse resp)
             throws IOException {
         HttpSession session = req.getSession(false);
         if (session != null) {

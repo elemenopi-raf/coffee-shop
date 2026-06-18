@@ -1,15 +1,21 @@
 package com.coffeeshop.controller;
 
 import com.coffeeshop.dao.NewsletterDAO;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+/**
+ * Handles POST requests from the newsletter sign-up form.
+ */
 @WebServlet("/newsletter")
-public class NewsletterServlet extends HttpServlet {
+public final class NewsletterServlet extends HttpServlet {
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         String email = req.getParameter("email");
 
@@ -21,13 +27,16 @@ public class NewsletterServlet extends HttpServlet {
         try {
             NewsletterDAO dao = new NewsletterDAO();
             if (dao.exists(email.trim())) {
-                req.getSession().setAttribute("newsletterMsg", "You're already subscribed!");
+                req.getSession().setAttribute("newsletterMsg",
+                        "You're already subscribed!");
             } else {
                 dao.save(email.trim());
-                req.getSession().setAttribute("newsletterMsg", "Thanks for subscribing!");
+                req.getSession().setAttribute("newsletterMsg",
+                        "Thanks for subscribing!");
             }
         } catch (Exception e) {
-            req.getSession().setAttribute("newsletterMsg", "Something went wrong. Try again.");
+            req.getSession().setAttribute("newsletterMsg",
+                    "Something went wrong. Try again.");
         }
 
         resp.sendRedirect(req.getContextPath() + "/");

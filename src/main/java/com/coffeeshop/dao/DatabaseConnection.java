@@ -6,25 +6,14 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.util.Properties;
 
-<<<<<<< Updated upstream
-public class DatabaseConnection {
-    private static final HikariDataSource dataSource;
-=======
 /**
- * Provides database connections using JDBC with configuration from
- * db.properties.
+ * Provides database connections using HikariCP connection pool.
+ * Configuration is loaded from db.properties on the classpath.
  */
 public final class DatabaseConnection {
 
-    /** The database URL. */
-    private static String url;
-
-    /** The database user. */
-    private static String user;
-
-    /** The database password. */
-    private static String password;
->>>>>>> Stashed changes
+    /** The HikariCP connection pool. */
+    private static final HikariDataSource dataSource;
 
     static {
         try (InputStream input = DatabaseConnection.class.getClassLoader()
@@ -45,16 +34,15 @@ public final class DatabaseConnection {
     }
 
     /**
-     * Returns a new database connection.
+     * Returns a connection from the pool.
      *
-     * @return a connection to the database
-     * @throws Exception if a database error occurs
+     * @return a database connection
+     * @throws Exception if a connection cannot be obtained
      */
     public static Connection getConnection() throws Exception {
         return dataSource.getConnection();
     }
 
-    // Private constructor to prevent instantiation
     private DatabaseConnection() {
     }
 }

@@ -1,43 +1,26 @@
 package com.coffeeshop.model;
 
-<<<<<<< Updated upstream
 import java.math.BigDecimal;
 
-public class MenuItem {
-=======
 /**
  * Represents a menu item in the coffee shop.
  */
 public final class MenuItem {
 
     /** The unique identifier. */
->>>>>>> Stashed changes
     private int id;
 
     /** The item name. */
     private String name;
-<<<<<<< Updated upstream
+
+    /** The item price. */
     private BigDecimal price;
+
+    /** The category (HOT, COLD, PASTRY). */
     private String category;
+
+    /** The image URL. */
     private String imageUrl;
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-=======
-
-    /** The item price as a string. */
-    private String price;
-
-    /** The icon class or path. */
-    private String icon;
 
     /**
      * Gets the id.
@@ -80,7 +63,7 @@ public final class MenuItem {
      *
      * @return the price
      */
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
@@ -89,26 +72,43 @@ public final class MenuItem {
      *
      * @param price the price to set
      */
-    public void setPrice(final String price) {
+    public void setPrice(final BigDecimal price) {
         this.price = price;
     }
 
     /**
-     * Gets the icon.
+     * Gets the category.
      *
-     * @return the icon
+     * @return the category
      */
-    public String getIcon() {
-        return icon;
+    public String getCategory() {
+        return category;
     }
 
     /**
-     * Sets the icon.
+     * Sets the category.
      *
-     * @param icon the icon to set
+     * @param category the category to set
      */
-    public void setIcon(final String icon) {
-        this.icon = icon;
+    public void setCategory(final String category) {
+        this.category = category;
     }
->>>>>>> Stashed changes
+
+    /**
+     * Gets the imageUrl.
+     *
+     * @return the imageUrl
+     */
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    /**
+     * Sets the imageUrl.
+     *
+     * @param imageUrl the imageUrl to set
+     */
+    public void setImageUrl(final String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

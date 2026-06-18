@@ -1,14 +1,12 @@
 package com.coffeeshop.dao;
 
 import com.coffeeshop.model.ContactMessage;
-<<<<<<< Updated upstream
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-=======
 import java.sql.Connection;
 import java.sql.PreparedStatement;
->>>>>>> Stashed changes
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Data access object for contact_messages table.
@@ -32,9 +30,16 @@ public final class ContactMessageDAO {
         }
     }
 
+    /**
+     * Retrieves all contact messages ordered by creation date descending.
+     *
+     * @return list of all contact messages
+     * @throws Exception if a database error occurs
+     */
     public List<ContactMessage> findAll() throws Exception {
         List<ContactMessage> messages = new ArrayList<>();
-        String sql = "SELECT id, name, email, message, created_at FROM contact_messages ORDER BY created_at DESC";
+        String sql = "SELECT id, name, email, message, created_at "
+                + "FROM contact_messages ORDER BY created_at DESC";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -45,7 +50,9 @@ public final class ContactMessageDAO {
                 msg.setEmail(rs.getString("email"));
                 msg.setMessage(rs.getString("message"));
                 Timestamp ts = rs.getTimestamp("created_at");
-                if (ts != null) msg.setCreatedAt(ts.toLocalDateTime());
+                if (ts != null) {
+                    msg.setCreatedAt(ts.toLocalDateTime());
+                }
                 messages.add(msg);
             }
         }
