@@ -37,8 +37,7 @@ public final class NewsletterDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
-                rs.next();
-                return rs.getInt(1) > 0;
+                return rs.next() && rs.getInt(1) > 0;
             }
         }
     }
