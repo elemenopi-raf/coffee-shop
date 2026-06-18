@@ -2,21 +2,29 @@ package com.coffeeshop.controller;
 
 import com.coffeeshop.dao.ContactMessageDAO;
 import com.coffeeshop.model.ContactMessage;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+/**
+ * Handles POST requests from the contact form. Saves the contact
+ * message and redirects back with a flash message.
+ */
 @WebServlet("/contact")
-public class ContactServlet extends HttpServlet {
+public final class ContactServlet extends HttpServlet {
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String message = req.getParameter("message");
         boolean isAjax = "XMLHttpRequest".equals(req.getHeader("X-Requested-With"));
 
+<<<<<<< Updated upstream
         if (name == null || email == null || message == null ||
             name.trim().isEmpty() || email.trim().isEmpty() || message.trim().isEmpty()) {
             if (isAjax) {
@@ -26,6 +34,15 @@ public class ContactServlet extends HttpServlet {
                 req.getSession().setAttribute("formMsgType", "error");
                 resp.sendRedirect(req.getContextPath() + "/");
             }
+=======
+        if (name == null || email == null || message == null
+                || name.trim().isEmpty()
+                || email.trim().isEmpty()
+                || message.trim().isEmpty()) {
+            req.getSession().setAttribute("formMsg", "Please fill in all fields.");
+            req.getSession().setAttribute("formMsgType", "error");
+            resp.sendRedirect(req.getContextPath() + "/");
+>>>>>>> Stashed changes
             return;
         }
 
@@ -47,6 +64,7 @@ public class ContactServlet extends HttpServlet {
 
         try {
             new ContactMessageDAO().save(cm);
+<<<<<<< Updated upstream
             if (isAjax) {
                 writeJson(resp, "success", "Thanks, " + name.trim() + "! We'll get back to you soon.");
             } else {
@@ -62,6 +80,19 @@ public class ContactServlet extends HttpServlet {
                 req.getSession().setAttribute("formMsgType", "error");
                 resp.sendRedirect(req.getContextPath() + "/");
             }
+=======
+            req.getSession().setAttribute(
+                    "formMsg",
+                    "Thanks, " + name.trim() + "! We'll get back to you soon."
+            );
+            req.getSession().setAttribute("formMsgType", "success");
+        } catch (Exception e) {
+            req.getSession().setAttribute(
+                    "formMsg",
+                    "Something went wrong. Please try again."
+            );
+            req.getSession().setAttribute("formMsgType", "error");
+>>>>>>> Stashed changes
         }
     }
 

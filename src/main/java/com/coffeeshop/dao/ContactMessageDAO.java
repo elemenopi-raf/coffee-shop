@@ -1,12 +1,27 @@
 package com.coffeeshop.dao;
 
 import com.coffeeshop.model.ContactMessage;
+<<<<<<< Updated upstream
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+=======
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+>>>>>>> Stashed changes
 
-public class ContactMessageDAO {
-    public void save(ContactMessage msg) throws Exception {
+/**
+ * Data access object for contact_messages table.
+ */
+public final class ContactMessageDAO {
+
+    /**
+     * Saves a contact message to the database.
+     *
+     * @param msg the contact message to save
+     * @throws Exception if a database error occurs
+     */
+    public void save(final ContactMessage msg) throws Exception {
         String sql = "INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
