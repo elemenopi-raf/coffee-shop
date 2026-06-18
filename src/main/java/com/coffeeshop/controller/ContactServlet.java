@@ -15,19 +15,28 @@ public class ContactServlet extends HttpServlet {
         String name = req.getParameter("name");
         String email = req.getParameter("email");
         String message = req.getParameter("message");
+        boolean isAjax = "XMLHttpRequest".equals(req.getHeader("X-Requested-With"));
 
         if (name == null || email == null || message == null ||
             name.trim().isEmpty() || email.trim().isEmpty() || message.trim().isEmpty()) {
-            req.getSession().setAttribute("formMsg", "Please fill in all fields.");
-            req.getSession().setAttribute("formMsgType", "error");
-            resp.sendRedirect(req.getContextPath() + "/");
+            if (isAjax) {
+                writeJson(resp, "error", "Please fill in all fields.");
+            } else {
+                req.getSession().setAttribute("formMsg", "Please fill in all fields.");
+                req.getSession().setAttribute("formMsgType", "error");
+                resp.sendRedirect(req.getContextPath() + "/");
+            }
             return;
         }
 
         if (!email.contains("@")) {
-            req.getSession().setAttribute("formMsg", "Please enter a valid email.");
-            req.getSession().setAttribute("formMsgType", "error");
-            resp.sendRedirect(req.getContextPath() + "/");
+            if (isAjax) {
+                writeJson(resp, "error", "Please enter a valid email.");
+            } else {
+                req.getSession().setAttribute("formMsg", "Please enter a valid email.");
+                req.getSession().setAttribute("formMsgType", "error");
+                resp.sendRedirect(req.getContextPath() + "/");
+            }
             return;
         }
 
@@ -38,13 +47,26 @@ public class ContactServlet extends HttpServlet {
 
         try {
             new ContactMessageDAO().save(cm);
-            req.getSession().setAttribute("formMsg", "Thanks, " + name.trim() + "! We'll get back to you soon.");
-            req.getSession().setAttribute("formMsgType", "success");
+            if (isAjax) {
+                writeJson(resp, "success", "Thanks, " + name.trim() + "! We'll get back to you soon.");
+            } else {
+                req.getSession().setAttribute("formMsg", "Thanks, " + name.trim() + "! We'll get back to you soon.");
+                req.getSession().setAttribute("formMsgType", "success");
+                resp.sendRedirect(req.getContextPath() + "/");
+            }
         } catch (Exception e) {
-            req.getSession().setAttribute("formMsg", "Something went wrong. Please try again.");
-            req.getSession().setAttribute("formMsgType", "error");
+            if (isAjax) {
+                writeJson(resp, "error", "Something went wrong. Please try again.");
+            } else {
+                req.getSession().setAttribute("formMsg", "Something went wrong. Please try again.");
+                req.getSession().setAttribute("formMsgType", "error");
+                resp.sendRedirect(req.getContextPath() + "/");
+            }
         }
+    }
 
-        resp.sendRedirect(req.getContextPath() + "/");
+    private void writeJson(HttpServletResponse resp, String type, String message) throws IOException {
+        resp.setContentType("application/json");
+        resp.getWriter().write("{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}");
     }
 }

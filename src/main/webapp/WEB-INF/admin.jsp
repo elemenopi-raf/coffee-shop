@@ -21,10 +21,20 @@
     .back-link:hover { text-decoration: underline; }
     .empty { text-align: center; padding: 3rem; color: #5c3a28; }
     .error { color: #e74c3c; margin-bottom: 1rem; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .admin-header h1 { margin-bottom: 0; }
+    .admin-header .right { display: flex; gap: 1rem; align-items: center; }
+    .logout-btn { background: none; border: 2px solid #e74c3c; color: #e74c3c; padding: 0.4rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: background 0.3s, color 0.3s; text-decoration: none; }
+    .logout-btn:hover { background: #e74c3c; color: #fff; }
   </style>
 </head>
 <body>
-  <a href="${pageContext.request.contextPath}/" class="back-link">&larr; Back to site</a>
+  <div class="admin-header">
+    <a href="${pageContext.request.contextPath}/" class="back-link" style="margin-bottom:0">&larr; Back to site</a>
+    <div class="right">
+      <a href="${pageContext.request.contextPath}/admin/logout" class="logout-btn">Logout</a>
+    </div>
+  </div>
   <h1>Contact Messages</h1>
 
   <c:if test="${not empty error}">

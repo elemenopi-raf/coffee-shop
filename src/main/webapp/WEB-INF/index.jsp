@@ -169,9 +169,6 @@
       <input type="email" id="email" name="email" placeholder="Your Email" required>
       <textarea id="message" name="message" placeholder="Your Message" required></textarea>
       <button type="submit" class="btn">Send Message</button>
-      <c:if test="${not empty formMsg}">
-        <p id="form-message" style="color: ${formMsgType == 'success' ? '#27ae60' : '#e74c3c'}">${formMsg}</p>
-      </c:if>
     </form>
   </section>
 
@@ -205,6 +202,13 @@
     </div>
   </footer>
 
-<script src="${pageContext.request.contextPath}/js/script.js"></script>
+<div id="modal-overlay" class="modal-overlay hidden">
+  <div class="modal-box">
+    <p id="modal-message"></p>
+    <button id="modal-close" class="btn">OK</button>
+  </div>
+</div>
+
+<script src="${pageContext.request.contextPath}/js/script.js?v=2"></script>
 </body>
 </html>
